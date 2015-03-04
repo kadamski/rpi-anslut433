@@ -1,5 +1,8 @@
 LDFLAGS=-lwiringPi
 
-all: anslut
+all: test
 
-anslut: anslut.c
+test: anslut.o test.c
+
+clean:
+	rm anslut.o test

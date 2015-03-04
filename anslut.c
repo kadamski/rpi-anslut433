@@ -1,25 +1,17 @@
 #include <wiringPi.h>
 #include <string.h>
+#include "anslut.h"
 
 #define RETRANSMIT 6
 
 char *types[] = { "00", "11" };
-enum type { T_ANSLUT, T_NEXA };
 
 char *units[] = { "00", "01", "10", "00" };
-enum unit { U_0, U_1, U_2, U_G };
 
 int pulses[] = { 250, 250, 1250, 2500, 10000 };
 enum phy_signal { P_HIGH, P_ONE, P_ZERO, P_SYNC, P_PAUSE };
 
-struct device
-{
-    unsigned int pin;
-    char code[27];
-    char type[2];
-};
-
-void phy_send(struct device *dev, enum phy_signal sig)
+static void phy_send(struct device *dev, enum phy_signal sig)
 {
     int pin = dev->pin;
     digitalWrite(pin, HIGH);
@@ -28,7 +20,7 @@ void phy_send(struct device *dev, enum phy_signal sig)
     delayMicroseconds(pulses[sig]);
 }
 
-void send_code(struct device *dev, char *code, unsigned int len)
+static void send_code(struct device *dev, char *code, unsigned int len)
 {
     int i;
     for (i = 0; i < len; i++) {
@@ -43,7 +35,7 @@ void send_code(struct device *dev, char *code, unsigned int len)
     }
 }
 
-void send_packets(struct device *dev, int group, enum unit unit, int value)
+static void send_packets(struct device *dev, int group, enum unit unit, int value)
 {
     int i;
 
@@ -59,8 +51,7 @@ void send_packets(struct device *dev, int group, enum unit unit, int value)
 
 }
 
-void device_init(struct device *dev, int pin, const char *code,
-        enum type type)
+void device_init(struct device *dev, int pin, const char *code, enum type type)
 {
     dev->pin = pin;
     strncpy(dev->code, code, sizeof(dev->code));
@@ -87,24 +78,4 @@ void device_off(struct device *dev, enum unit unit)
     }
 
     send_packets(dev, group, unit, 0);
-}
-
-int main (void)
-{
-    int i;
-    struct device dev;
-    //wiringPiSetupSys();
-    wiringPiSetupGpio();
-    pinMode(22, OUTPUT);
-
-    device_init(&dev, 22, "10101010101010101010101010", T_ANSLUT);
-
-    for(;;) {
-        device_on(&dev, U_G);
-        delay(1000);
-        device_off(&dev, U_G);
-        delay(1000);
-    }
-
-    return 0 ;
 }

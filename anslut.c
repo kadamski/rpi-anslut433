@@ -54,8 +54,8 @@ static void send_packets(struct device *dev, int group, enum unit unit, int valu
 void device_init(struct device *dev, int pin, const char *code, enum type type)
 {
     dev->pin = pin;
-    strncpy(dev->code, code, sizeof(dev->code));
-    strncpy(dev->type, types[type], sizeof(dev->code));
+    memcpy(dev->code, code, sizeof(dev->code));
+    memcpy(dev->type, types[type], sizeof(dev->type));
 }
 
 void device_on(struct device *dev, enum unit unit)

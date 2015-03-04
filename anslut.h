@@ -7,7 +7,7 @@ enum unit { U_0, U_1, U_2, U_G };
 struct device
 {
     unsigned int pin;
-    char code[27];
+    char code[26];
     char type[2];
 };
 

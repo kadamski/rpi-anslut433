@@ -20,18 +20,19 @@ void setup(int sys)
 
 void usage(void)
 {
-    fprintf(stderr, "Usage: test [-n] [-s] [-p pid] [-u unit] addr\n");
+    fprintf(stderr, "Usage: test [-n] [-s] [-p pid] [-u unit] addr val\n");
     fprintf(stderr, "-n\t- NEXA instead of ANSLUT device\n");
     fprintf(stderr, "-s\t- user sysfs GPIO instead of /dev/mem\n");
     fprintf(stderr, "-u\t- unit number, 3=group (default)\n");
     fprintf(stderr, "-p\t- data pin number (default=22)\n");
     fprintf(stderr, "addr\t- RC addr, for example 10101010101010101010101010\n");
+    fprintf(stderr, "val\t- 1=on, 0=off");
 }
 
 int main(int argc, char *argv[])
 {
     int opt;
-    int unit = U_G, type = T_ANSLUT, pin = PIN, use_sys = 0;
+    int unit = U_G, type = T_ANSLUT, pin = PIN, use_sys = 0, val;
     struct device dev;
 
     while ((opt = getopt(argc, argv, "nsu:p:")) != -1) {
@@ -54,8 +55,8 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (optind >= argc) {
-        fprintf(stderr, "No address specified!\n");
+    if (optind >= argc-1) {
+        fprintf(stderr, "Not enough arguments!\n");
         usage();
         exit(EXIT_FAILURE);
     }
@@ -70,14 +71,17 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
+    val = !!atoi(argv[optind+1]);
+
+    printf("Setting device to %d\n", val);
+
     setup(use_sys);
     device_init(&dev, pin, argv[optind], type);
 
-    for(;;) {
-        device_off(&dev, unit);
-        delay(1000);
+    if (val) {
         device_on(&dev, unit);
-        delay(1000);
+    } else {
+        device_off(&dev, unit);
     }
 
     return 0 ;

@@ -14,29 +14,16 @@
                 <h1>Anslutlib test page</h1>
             </div>
 
+        {% for unit in units %}
             <div data-role="main" class="ui-content">
-                <div class="ui-block-a"><legend>Speakers:</legend></div>
+                <div class="ui-block-a"><legend>{{ unit.0 }}:</legend></div>
                 <div class="ui-grid-a">
-                    <div class="ui-block-a"><a href="?button=0&value=1" data-role="button">On</a></div>
-                    <div class="ui-block-b"><a href="?button=0&value=0" data-role="button">Off</a></div>
+                    <div class="ui-block-a"><a href="?button={{ unit.1 }}&value=1" data-role="button">On</a></div>
+                    <div class="ui-block-b"><a href="?button={{ unit.1 }}&value=0" data-role="button">Off</a></div>
                 </div>
             </div>
+        {% endfor %}
 
-            <div data-role="main" class="ui-content">
-                <div class="ui-block-a"><legend>Something:</legend></div>
-                <div class="ui-grid-a">
-                    <div class="ui-block-a"><a href="?button=1&value=1" data-role="button">On</a></div>
-                    <div class="ui-block-b"><a href="?button=1&value=0" data-role="button">Off</a></div>
-                </div>
-            </div>
-
-            <div data-role="main" class="ui-content">
-                <div class="ui-block-a"><legend>Light:</legend></div>
-                <div class="ui-grid-a">
-                    <div class="ui-block-a"><a href="?button=2&value=1" data-role="button">On</a></div>
-                    <div class="ui-block-b"><a href="?button=2&value=0" data-role="button">Off</a></div>
-                </div>
-            </div>
         </div>
     </body>
 </html>

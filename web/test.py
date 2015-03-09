@@ -5,18 +5,36 @@ import subprocess
 app = Flask(__name__)
 
 units = (
-    ('Speaker', 0),
-    ('Something', 1),
-    ('Light', 2),
-    ('All', 3),
+    (0x2aaaaaa, (
+     ('Speaker', 0),
+     ('Something', 1),
+     ('Light', 2),
+     ('All', 3),
+    )),
+    (0x1bbbbbb, (
+     ('Test', 0),
+    )),
 )
+
+def _rc_code(val):
+    try:
+        val = int(val)
+        if val > 0x3ffffff:
+            raise ValueError
+    except (ValueError, TypeError):
+        return None
+
+    ret = str(bin(val))[2:]
+    return '0' * (26 - len(ret)) + ret
 
 @app.route('/')
 def index():
     button = request.args.get('button', None)
     value = request.args.get('value', None)
-    if button != None and value != None:
-        subprocess.call(['../test', '-s', '-u', button, '10101010101010101010101010', value])
+    code = _rc_code(request.args.get('code', None))
+
+    if button != None and value != None and code != None:
+        subprocess.call(['../test', '-s', '-u', button, code, value])
         return redirect(url_for('index'))
     else:
         return render_template('index.html', units=units)
